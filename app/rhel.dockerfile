@@ -2,8 +2,6 @@ ARG MX_VERSION
 FROM mendix/runtime-base:$MX_VERSION-rhel
 
 COPY . /opt/mendix/app
-RUN chgrp -R 0 /opt/mendix/app && \
-    chmod -R g=u /opt/mendix/app
 
 # Container configuration
 WORKDIR /opt/mendix/app
