@@ -1,13 +1,27 @@
+FROM alpine:latest as builder
+
+# Install curl
+RUN apk add --no-cache curl
+
+ARG MX_VERSION
+ARG DOWNLOAD_URL=https://download.mendix.com/runtimes/
+
+# Download Mendix Runtime
+RUN cd /opt && \
+    curl -sL "${DOWNLOAD_URL}mendix-${MX_VERSION}.tar.gz" | tar xz && \
+    chown -R root:root /opt/${MX_VERSION}
+
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 
 # Base layer: prerequisites
-# tar & gzip to download the runtime
-# java for the runtime
-# Mendix directories
 
-RUN microdnf install tar gzip java-1.8.0-openjdk-headless && \
-    microdnf clean all && \
-    mkdir -p /opt/mendix/app && \
+# java for the runtime
+COPY --from=adoptopenjdk:8-jre-hotspot-bionic /opt/java/openjdk /opt/java/openjdk
+ENV JAVA_HOME=/opt/java/openjdk \
+    PATH="/opt/java/openjdk/bin:$PATH"
+
+# Mendix directories
+RUN mkdir -p /opt/mendix/app && \
     mkdir -p /opt/mendix/app/data/database /opt/mendix/app/data/files /opt/mendix/app/data/model-upload /opt/mendix/app/data/tmp && \
     mkdir -p /opt/mendix/app/.java && \
     chmod g+rw /etc/passwd && \
@@ -16,17 +30,15 @@ RUN microdnf install tar gzip java-1.8.0-openjdk-headless && \
 
 # Mendix Runtime layer: MxRuntime matching the app version
 ARG MX_VERSION
-ARG DOWNLOAD_URL=https://download.mendix.com/runtimes/
+
+# Copy downloaded runtime
+COPY --from=builder /opt/${MX_VERSION} /opt/mendix/
 
 # Startup scripts
 COPY *.sh /opt/mendix/app/
 
-# Download Mendix runtime
 # Set permissions
-RUN mkdir -p /opt/mendix/runtime && \
-    cd /opt/mendix/runtime && \
-    curl -sL "${DOWNLOAD_URL}mendix-${MX_VERSION}.tar.gz" | tar xz --strip-components=2 && \
-    chown -R root:root /opt/mendix/runtime && \
+RUN chown root:root /opt/mendix/runtime && \
     chmod u+x /opt/mendix/app/*.sh && \
     chgrp -R 0 /opt/mendix/app && \
     chmod -R g=u /opt/mendix/app
