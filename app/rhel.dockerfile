@@ -1,10 +1,9 @@
 ARG MX_VERSION
-FROM mendix/runtime-base:$MX_VERSION-rhel
+FROM mendix/runtime-base:${MX_VERSION}-rhel
 
 COPY . /opt/mendix/app
 
 # Container configuration
-WORKDIR /opt/mendix/app
 USER 1001
 ENV HOME /opt/mendix/app
 
