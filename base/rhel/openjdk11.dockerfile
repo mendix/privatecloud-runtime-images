@@ -42,3 +42,11 @@ RUN chown root:root /opt/mendix/runtime && \
     chmod u+x /opt/mendix/app/*.sh && \
     chgrp -R 0 /opt/mendix/app && \
     chmod -R g=u /opt/mendix/app
+
+# App container configuration
+USER 1001
+ENV HOME /opt/mendix/app
+EXPOSE 8080
+
+ENTRYPOINT ["/opt/mendix/app/entrypoint.sh"]
+CMD ["/opt/mendix/app/mxruntime.sh"]

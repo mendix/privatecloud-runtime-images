@@ -2,7 +2,7 @@
 
 This repository contains reference Dockerfiles used by the Mendix Operator to build an image of a Mendix app.
 
-This repository can be cloned to create custom base images or to customize the Dockerfile used to build a Mendix app.
+This repository can be cloned to create custom base images.
 
 **Note**: these images are intended to be used by the Mendix Operator from the Mendix Private Cloud offering. An external component, the m2ee sidecar, is required to actually initialize and start an app. For running Mendix apps in a standalone configuration, the [Docker Mendix Buildpack](https://github.com/mendix/docker-mendix-buildpack) should be used.
 
@@ -46,15 +46,14 @@ These images are built and published to the [mendix/runtime-base](https://hub.do
 Once the base images are ready for use, a Mendix App image can be built. This process is done automatically by the Mendix Operator when it is deploying a new Mendix App MDA.
 
 Internally, the operator will
-1. Download the MDA into a `workspace` directory
-2. Extract the MDA into the `workspace` directory
-3. Download the Dockerfile into the `workspace` directory and rename it to `Dockerfile`
-4. Run the equivalent of `docker build . --build-arg MX_VERSION=<mendix runtime version>`
+1. Download the MDA
+2. Extract the MDA
+3. Add the extracted MDA contents on top of the base image
 
 The Mendix Operator can be configured to use a custom Dockerfile for building a Mendix App. For more information, refer to the Mendix Operator documentation.
 
 Two base images are provided by Mendix, they're identical in everything exept the base image: [bionic.dockerfile](apps/bionic.dockerfile) is based on the `bionic` base image, while [rhel.dockerfile](apps/rhel.dockerfile) is based on the `rhel` base image.
 
 The URLs which can be used in the Mendix Operator are:
-- https://raw.githubusercontent.com/mendix/privatecloud-runtime-images/master/app/bionic.dockerfile
-- https://raw.githubusercontent.com/mendix/privatecloud-runtime-images/master/app/rhel.dockerfile
+- https://raw.githubusercontent.com/mendix/privatecloud-runtime-images/v1.0.0/app/bionic.dockerfile
+- https://raw.githubusercontent.com/mendix/privatecloud-runtime-images/v1.0.0/app/rhel.dockerfile
