@@ -16,9 +16,9 @@ FROM registry.access.redhat.com/ubi8/ubi-minimal
 # Base layer: prerequisites
 
 # java for the runtime
-COPY --from=adoptopenjdk:8-jre-hotspot-bionic /opt/java/openjdk /opt/java/openjdk
-ENV JAVA_HOME=/opt/java/openjdk \
-    PATH="/opt/java/openjdk/bin:$PATH"
+RUN microdnf update -y && rm -rf /var/cache/yum && \
+    microdnf install java-8-openjdk-headless -y && \
+    microdnf clean all
 
 # Mendix directories
 RUN mkdir -p /opt/mendix/app && \
