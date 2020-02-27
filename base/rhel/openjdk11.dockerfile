@@ -16,9 +16,10 @@ FROM registry.access.redhat.com/ubi8/ubi-minimal
 # Base layer: prerequisites
 
 # java for the runtime
-RUN microdnf update -y && rm -rf /var/cache/yum && \
+RUN microdnf update -y && \
     microdnf install java-11-openjdk-headless -y && \
-    microdnf clean all
+    microdnf clean all && \
+    rm -rf /var/cache/yum
 
 # Mendix directories
 RUN mkdir -p /opt/mendix/app && \
