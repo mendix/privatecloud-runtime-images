@@ -39,6 +39,7 @@ RUN chown root:root /opt/mendix/runtime && \
 # App container configuration
 USER 1001
 ENV HOME /opt/mendix/app
+ENV JAVA_TOOL_OPTIONS -Dfile.encoding=utf-8
 EXPOSE 8080
 
 ENTRYPOINT ["/opt/mendix/app/entrypoint.sh"]
