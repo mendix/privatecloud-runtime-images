@@ -16,7 +16,7 @@ FROM adoptopenjdk:11-jre-hotspot-bionic
 # Base layer: prerequisites
 # Mendix directories
 RUN mkdir -p /opt/mendix/app/data/database /opt/mendix/app/data/files /opt/mendix/app/data/model-upload /opt/mendix/app/data/tmp && \
-    mkdir -p /opt/mendix/app/.java && \
+    mkdir -p /opt/mendix/app/.java/.userPrefs && \
     chmod g+rw /etc/passwd && \
     chgrp -R 0 /opt/mendix/app && \
     chmod -R g=u /opt/mendix/app
