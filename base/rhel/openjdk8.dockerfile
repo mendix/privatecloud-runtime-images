@@ -13,6 +13,10 @@ RUN cd /opt && \
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 
+# Set the locale
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+
 # Base layer: prerequisites
 
 # java for the runtime
@@ -47,7 +51,6 @@ RUN chown root:root /opt/mendix/runtime && \
 # App container configuration
 USER 1001
 ENV HOME /opt/mendix/app
-ENV JAVA_TOOL_OPTIONS -Dfile.encoding=utf-8
 EXPOSE 8080
 
 ENTRYPOINT ["/opt/mendix/app/entrypoint.sh"]
