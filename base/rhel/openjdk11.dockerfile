@@ -20,8 +20,9 @@ ENV LC_ALL C.UTF-8
 # Base layer: prerequisites
 
 # java for the runtime
+# fontconfig for generating Excel reports and other documents
 RUN microdnf update -y && \
-    microdnf install java-11-openjdk-headless -y && \
+    microdnf install java-11-openjdk-headless fontconfig -y && \
     microdnf clean all && \
     rm -rf /var/cache/yum
 
