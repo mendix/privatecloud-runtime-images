@@ -7,15 +7,20 @@ ARG MX_VERSION
 ARG DOWNLOAD_URL=https://download.mendix.com/runtimes/
 
 # Download Mendix Runtime
+# Set runtime owner to root (prevent modifications during runtime)
 RUN cd /opt && \
     curl -sL "${DOWNLOAD_URL}mendix-${MX_VERSION}.tar.gz" | tar xz && \
-    chown -R root:root /opt/${MX_VERSION}
+    chown -R 0:0 /opt/${MX_VERSION}
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 
 # Set the locale
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
+
+# Set the user ID and home path
+ENV USER_UID=1001 \
+    HOME=/opt/mendix/app
 
 # Base layer: prerequisites
 
@@ -29,10 +34,7 @@ RUN microdnf update -y && \
 # Mendix directories
 RUN mkdir -p /opt/mendix/app && \
     mkdir -p /opt/mendix/app/data/database /opt/mendix/app/data/files /opt/mendix/app/data/model-upload /opt/mendix/app/data/tmp && \
-    mkdir -p /opt/mendix/app/.java/.userPrefs && \
-    chmod g+rw /etc/passwd && \
-    chgrp -R 0 /opt/mendix/app && \
-    chmod -R g=u /opt/mendix/app
+    mkdir -p /opt/mendix/app/.java/.userPrefs
 
 # Mendix Runtime layer: MxRuntime matching the app version
 ARG MX_VERSION
@@ -43,16 +45,16 @@ COPY --from=builder /opt/${MX_VERSION} /opt/mendix/
 # Startup scripts
 COPY *.sh /opt/mendix/app/
 
-# Set permissions
-RUN chown root:root /opt/mendix/runtime && \
-    chmod u+x /opt/mendix/app/*.sh && \
-    chgrp -R 0 /opt/mendix/app && \
+# Create user (for non-OpenShift clusters) and set permissions
+# chown to user 1001 for non-OpenShift clusters
+# set group 0 (root) for OpenShift (we don't know what the runtime UID will be)
+RUN echo "mendix:x:${USER_UID}:${USER_UID}:mendix user:${HOME}:/sbin/nologin" >> /etc/passwd && \
+    chown -R ${USER_UID}:0 /opt/mendix/app && \
+    chmod ug+x /opt/mendix/app/*.sh && \
     chmod -R g=u /opt/mendix/app
 
 # App container configuration
-USER 1001
-ENV HOME /opt/mendix/app
+USER ${USER_UID}
 EXPOSE 8080
 
-ENTRYPOINT ["/opt/mendix/app/entrypoint.sh"]
 CMD ["/opt/mendix/app/mxruntime.sh"]
