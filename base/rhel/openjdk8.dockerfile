@@ -5,11 +5,15 @@ RUN apk add --no-cache curl
 
 ARG MX_VERSION
 ARG DOWNLOAD_URL=https://download.mendix.com/runtimes/
+ARG MXAGENT_DOWNLOAD_URL=https://cdn.mendix.com/mx-buildpack/mx-agent/mx-agent-v0.12.0.jar
 
 # Download Mendix Runtime
+# Download MxAgent
 # Set runtime owner to root (prevent modifications during runtime)
 RUN cd /opt && \
     curl -sL "${DOWNLOAD_URL}mendix-${MX_VERSION}.tar.gz" | tar xz && \
+    mkdir /opt/${MX_VERSION}/mxagent && \
+    curl -sL -o /opt/${MX_VERSION}/mxagent/mx-agent.jar "${MXAGENT_DOWNLOAD_URL}" && \
     chown -R 0:0 /opt/${MX_VERSION}
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal
