@@ -26,7 +26,7 @@ function shutdown_runtime()
 trap shutdown_runtime SIGINT SIGTERM
 
 MX_INSTALL_PATH=/opt/mendix \
-java -Duser.home=$HOME -javaagent:/opt/mendix/mxagent/mx-agent.jar -jar /opt/mendix/runtime/launcher/runtimelauncher.jar /opt/mendix/app &
+java -Duser.home=$HOME -javaagent:/opt/mendix/mxagent/mx-agent.jar=config=/opt/mendix/mxagent/MyAgentConfig.json,instrumentation_config=/opt/mendix/mxagent/DefaultInstrumentationConfig.json -jar /opt/mendix/runtime/launcher/runtimelauncher.jar /opt/mendix/app &
 MXRUNTIME_PID=$!
 
 wait $MXRUNTIME_PID

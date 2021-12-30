@@ -16,6 +16,9 @@ RUN cd /opt && \
     curl -sL -o /opt/${MX_VERSION}/mxagent/mx-agent.jar "${MXAGENT_DOWNLOAD_URL}" && \
     chown -R 0:0 /opt/${MX_VERSION}
 
+# MxAgent configuration
+COPY --chown=0:0 mxagent/* /opt/${MX_VERSION}/mxagent/
+
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 
 # Set the locale
