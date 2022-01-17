@@ -12,7 +12,7 @@ This repository can be cloned to create custom base images.
 
 The base image contains the Mendix Runtime and all dependencies required to build and run it.
 
-Currently, there are two types of base images:
+Currently, there is one type of base images:
 
 * `rhel` (based on [Red Hat Universal Base Image 8 Minimal](https://access.redhat.com/containers/#/registry.access.redhat.com/ubi8/ubi-minimal))
 

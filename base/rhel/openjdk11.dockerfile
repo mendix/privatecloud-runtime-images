@@ -12,6 +12,16 @@ RUN cd /opt && \
     curl -sL "${DOWNLOAD_URL}mendix-${MX_VERSION}.tar.gz" | tar xz && \
     chown -R 0:0 /opt/${MX_VERSION}
 
+# Download MxAgent
+# Set owner to root (prevent modifications during runtime)
+# Note: MxAgent is a temporary solution until Runtime Tracing becomes available, and will be deprecated in Mendix 10
+ARG MXAGENT_DOWNLOAD_URL=https://cdn.mendix.com/mx-buildpack/mx-agent/mx-agent-v0.12.0.jar
+RUN if [ $(expr "$MX_VERSION" : '9\..*\..*\..*') -ne 0 ] ; then\
+    mkdir /opt/${MX_VERSION}/mxagent &&\
+    curl -sL -o /opt/${MX_VERSION}/mxagent/mx-agent.jar "${MXAGENT_DOWNLOAD_URL}" &&\
+    chown -R 0:0 /opt/${MX_VERSION}/mxagent; \
+fi
+
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 
 # Set the locale
